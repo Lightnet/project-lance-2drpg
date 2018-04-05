@@ -4,13 +4,18 @@
 //let PIXI = null;
 //let PIXI = require('pixi.js');
 //let PixiParticles = null;
+//import MyRenderer from '../client/MyRenderer';
 
-class ShipActor{
+//class ShipActor { //does not work if bebel is not setup right.
+export default class ShipActor {
 
     constructor(renderer){
-        
+        //super(renderer);
         //PIXI = require('pixi.js');
         //PixiParticles = require('pixi-particles');
+        console.log("ShipActor");
+        console.log(renderer);
+
         this.gameEngine = renderer.gameEngine;
         //this.backLayer = renderer.layer1;
         this.sprite = new PIXI.Container();
@@ -25,7 +30,7 @@ class ShipActor{
         this.shipSprite.width = 50;
         this.shipSprite.height = 45;
 
-        this.addThrustEmitter();
+        //this.addThrustEmitter();
         this.sprite.addChild(this.shipContainerSprite);
         this.shipContainerSprite.addChild(this.shipSprite);
         

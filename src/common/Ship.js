@@ -2,11 +2,12 @@
 
 */
 
-import Serializer from 'lance/serialize/Serializer';
+//import Serializer from 'lance/serialize/Serializer';
 import DynamicObject from 'lance/serialize/DynamicObject';
 
 import Renderer from '../client/MyRenderer';
 import ShipActor from '../client/ShipActor';
+//import '../client/ShipActor';
 
 export default class Ship extends DynamicObject {
 
@@ -14,7 +15,6 @@ export default class Ship extends DynamicObject {
         super(gameEngine, options, props);
         this.showThrust = 0;
     }
-
 
     get maxSpeed() { return 3.0; }
     
@@ -24,9 +24,9 @@ export default class Ship extends DynamicObject {
             console.log("ship build renderer");
             console.log(renderer);
 
-            console.log(ShipActor)
+            //console.log(ShipActor());
 
-            //let shipActor = new ShipActor(renderer);
+            let shipActor = new ShipActor(renderer);
             /*
             let sprite = shipActor.sprite;
             renderer.sprites[this.id] = sprite;

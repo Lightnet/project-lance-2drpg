@@ -3,6 +3,9 @@
 # Information:
  This project pixijs 2D RPG. By using the npm gulp task script to build server, client, and browser-sync scripts for developement.
 
+# Code Language:
+ * Babel 6.26.0 javascript https://babeljs.io/
+
 # engines / frameworks:
  * http://pixijs.io
  
@@ -25,6 +28,10 @@
  * gulp default (start auto build by default)
  * Need Visual Studio Code and install ext gulp task.
  * Work in progress.
+
+# Reference projects:
+ * https://github.com/lance-gg/spaaace
+ * https://github.com/lance-gg pong
 
 # Ref Links:
  * https://stackoverflow.com/questions/37609255/gulp-copy-and-watch-folder-with-ts-scss-html
