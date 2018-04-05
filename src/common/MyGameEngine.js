@@ -129,6 +129,30 @@ export default class MyGameEngine extends GameEngine {
 
         super.processInput(inputData, playerId);
 
+        // get the player ship tied to the player socket
+        let playerShip = this.world.queryObject({
+            playerId: playerId,
+            instanceType: Ship
+        });
+
+        console.log(inputData.input);
+
+        if (playerShip) {
+            if (inputData.input == 'up') {
+                playerShip.isAccelerating = true;
+                playerShip.showThrust = 5; // show thrust for next steps.
+            } else if (inputData.input == 'right') {
+                playerShip.isRotatingRight = true;
+            } else if (inputData.input == 'left') {
+                playerShip.isRotatingLeft = true;
+            } else if (inputData.input == 'space') {
+                console.log("fire missile");
+                //this.makeMissile(playerShip, inputData.messageIndex);
+                //this.emit('fireMissile');
+            }
+        }
+
+
         // get the player paddle tied to the player socket
         //let playerPaddle = this.world.queryObject({ playerId });
         //if (playerPaddle) {

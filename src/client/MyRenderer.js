@@ -1,6 +1,5 @@
 'use strict';
 
-//typeof(window) === 'undefined';
 //import 'pixi.js';
 //import 'pixi.js/dist/pixi';
 //let PIXI = require('pixi.js/dist/pixi');

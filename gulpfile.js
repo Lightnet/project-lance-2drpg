@@ -18,8 +18,6 @@ var browserSync = require('browser-sync').create();
 var browserify = require('browserify');
 var transform = require('vinyl-transform');
 
-//var watchify = require('watchify');
-//var bbabelrc = false;
 /* pathConfig*/
 var entryPoint = './src/client/clientEntryPoint.js';//,
 var outPutBrowser = "public/**/*.*";
@@ -211,6 +209,8 @@ gulp.task('browser-sync',['serve'], function() {
     browserSync.init({
         proxy: "localhost:8080"
         ,files:['pulbic/**/*.*']
+        //,browser: 'chrome'
+        //,browser: 'firefox'
     });
 });
 

@@ -26,6 +26,23 @@ export default class MyServerEngine extends ServerEngine {
     onPlayerConnected(socket) {
         super.onPlayerConnected(socket);
 
+        let makePlayerShip = () => {
+            let ship = this.gameEngine.makeShip(socket.playerId);
+            console.log("create ship");
+            //this.scoreData[ship.id] = {
+                //kills: 0,
+                //name: "guest"//nameGenerator('general')
+            //};
+            //this.updateScore();
+        };
+
+        //makePlayerShip();
+
+        // handle client restart requests
+        //socket.on('requestRestart', makePlayerShip);
+
+
+
         // attach newly connected player an available paddle
         //if (this.players.player1 === null) {
             //this.players.player1 = socket.id;
