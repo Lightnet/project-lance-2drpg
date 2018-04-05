@@ -3,6 +3,10 @@
 import TwoVector from 'lance/serialize/TwoVector';
 //import Paddle from './Paddle';
 //import Ball from './Ball';
+
+import Ship from './Ship';
+
+
 const PADDING = 20;
 const WIDTH = 400;
 const HEIGHT = 400;
@@ -23,6 +27,8 @@ export default class MyGameEngine extends GameEngine {
     registerClasses(serializer) {
         //serializer.registerClass(Paddle);
         //serializer.registerClass(Ball);
+
+        serializer.registerClass(Ship);
     }
 
     start() {
@@ -49,6 +55,18 @@ export default class MyGameEngine extends GameEngine {
         //this.addObjectToWorld(new Paddle(this, null, { position: new TwoVector(PADDING, 0), playerId: 1 }));
         //this.addObjectToWorld(new Paddle(this, null, { position: new TwoVector(WIDTH - PADDING, 0), playerId: 2 }));
         //this.addObjectToWorld(new Ball(this, null, { position: new TwoVector(WIDTH /2, HEIGHT / 2) }));
+
+        this.addship();
+        console.log("init game!");
+    }
+
+    addship(){
+        let ship = new Ship(this, null, {
+            position: new TwoVector(0, 0)
+        });
+        this.addObjectToWorld(ship);
+        console.log(`ship added: ${ship.toString()}`);
+        return ship;
     }
 
     postStepHandleBall() {

@@ -1,10 +1,32 @@
 'use strict';
 
-import 'pixi.js';
+//typeof(window) === 'undefined';
+//import 'pixi.js';
+//import 'pixi.js/dist/pixi';
+//let PIXI = require('pixi.js/dist/pixi');
+//let PIXI = require('pixi.js');
+//import * as PIXI from 'pixi.js'
+
+import isNode from 'detect-node'
+if (!isNode) {                                                                                                                                                                                        
+    require('pixi.js');
+}
 
 import Renderer from 'lance/render/pixi/PixiRenderer';
 
 export default class MyRenderer extends Renderer {
+
+    get ASSETPATHS(){
+        return {
+            ship: 'assets/ship1.png'
+            //,missile: 'assets/shot.png'
+            //,bg1: 'assets/space3.png'
+            //,bg2: 'assets/space2.png'
+            //,bg3: 'assets/clouds2.png'
+            //,bg4: 'assets/clouds1.png'
+            //,smokeParticle: 'assets/smokeparticle.png'
+        };
+    }
 
     constructor(gameEngine, clientEngine) {
         super(gameEngine, clientEngine);

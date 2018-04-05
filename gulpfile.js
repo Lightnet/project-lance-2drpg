@@ -16,6 +16,8 @@ var babelify = require('babelify');
 
 var browserSync = require('browser-sync').create();
 var browserify = require('browserify');
+var transform = require('vinyl-transform');
+
 //var nodemon = require('gulp-nodemon');
 
 //var watchify = require('watchify');
@@ -33,13 +35,8 @@ var server = null
 //var server = gls.new('dist/main.js');
 
 //build main app, server, and client engine for lance hosting
-gulp.task('build',['main-script','src-server-script','scr-client-build'], ()=>{
-    //debug({title: 'building scripts'});
-    //console.log("done???");
-    //gulp.start('serve');
-    //if (server !=null)
-            //server.start.bind(server)();
-    return;
+gulp.task('build',['main-script','src-server-script','scr-client-build'],function(){
+    console.log("finish build???")
 });
 
 //build lance server, express, and socket.io
@@ -54,8 +51,12 @@ gulp.task('main-script', function () {
                   }
                 }]
               ]
-        ,"plugins": ["transform-runtime",
-              ["module-resolver", {
+        ,"plugins": ["transform-runtime"
+            ,["transform-define", {
+                "process.env.NODE_ENV": "production",
+                "typeof window": "object"
+            }]
+            ,["module-resolver", {
                 "root": ["./"],
                 "alias": {
                     "lance": "../node_modules/lance-gg/es5"
@@ -68,7 +69,7 @@ gulp.task('main-script', function () {
 
 //build lance server engine
 gulp.task('src-server-script', function () {
-    return gulp.src(['src/**/*.js'])
+    return gulp.src(['./src/**/*.js','!src/client/clientEntryPoint.js'])//,'!src/client/*.js'])
     .pipe(debug({title: 'building server scripts'}))
     .pipe(babel({
         "presets": [
@@ -78,8 +79,12 @@ gulp.task('src-server-script', function () {
                   }
                 }]
               ]
-        ,"plugins": ["transform-runtime",
-              ["module-resolver", {
+        ,"plugins": [["transform-runtime"]
+            ,["transform-define", {
+                "process.env.NODE_ENV": "production",
+                "typeof window": "object"
+            }]
+            ,["module-resolver", {
                 "root": ["./dist/src"],
                 "alias": {
                   "lance": "../node_modules/lance-gg/es5"
@@ -91,8 +96,12 @@ gulp.task('src-server-script', function () {
 });
 
 //build lance client engine and render
-gulp.task('scr-client-build', function () {
-    var bundler = browserify(entryPoint);
+gulp.task('scr-client-build',  function(cb) {
+    
+    var bundler = browserify({
+        entries: entryPoint
+        ,debug: true
+    });
     //bundler.transform(babel);
     bundler.transform(babelify.configure({
         "babelrc": false,
@@ -103,8 +112,12 @@ gulp.task('scr-client-build', function () {
                   }
                 }]
               ]
-        ,"plugins": ["transform-runtime",
-              ["module-resolver", {
+        ,"plugins": [["transform-runtime"]
+              ,["transform-define", {
+                "process.env.NODE_ENV": "production",
+                "typeof window": "object"
+              }]
+              ,["module-resolver", {
                 "root": ["./dist/src"],
                 "alias": {
                   "lance": "./node_modules/lance-gg/es5",
@@ -112,30 +125,81 @@ gulp.task('scr-client-build', function () {
                 }
               }]
         ]
-    }))
+    }));
    
     function rebundle() {
         return bundler.bundle()
         .on('error', function(err){
             console.log(err.stack);
          
-            notifier.notify({
-              'title': 'Compile Error',
-              'message': err.message
-            });
+            //notifier.notify({
+              //'title': 'Compile Error',
+              //'message': err.message
+            //});
         })
-        //.pipe( debug({title: 'building bundle.js'}) )
-        //.on('error', function(err) { console.error(err); this.emit('end'); })
-        //.pipe(buffer())
         .pipe(source('bundle.js'))
+        .pipe(buffer())
+        .pipe( debug({title: 'src client building...'}) )
+        //.on('error', function(err) { console.error(err); this.emit('end'); })
         //.pipe(uglify())
         //.pipe(sourcemaps.init({ loadMaps: true }))
         //.pipe(sourcemaps.write('./'))
-        //.pipe(gulp.dest('./public'));
-        .pipe(gulp.dest('public'));
+        .pipe(gulp.dest('./public'))
+        //.on('end', cb)
+        //.on('end', ()=>{
+            //cb();
+            //console.log("done??");
+        //})
+        //.pipe(gulp.dest('public'));
+        //console.log("scr-client-build");
+        ;
     }
-
     return rebundle();
+    //rebundle();
+
+    /*
+    var browserified = transform(function(filename) {
+        var bundler = browserify(filename);
+        //bundler.transform(babel);
+        bundler.transform(babelify.configure({
+            "babelrc": false,
+            "presets": [
+                    ["env", {
+                    "targets": {
+                        "node": "current"
+                    }
+                    }]
+                ]
+            ,"plugins": [["transform-runtime"]
+                ,["transform-define", {
+                    "process.env.NODE_ENV": "production",
+                    "typeof window": "object"
+                }]
+                ,["module-resolver", {
+                    "root": ["./dist/src"],
+                    "alias": {
+                    "lance": "./node_modules/lance-gg/es5",
+                    "lance-gg": "./node_modules/lance-gg/es5"
+                    }
+                }]
+            ]
+        }));
+        return bundler.bundle();
+      });
+      */
+      
+      //return gulp.src(['test.js']) // you can also use glob patterns here to browserify->uglify multiple files
+      //.pipe(browserified)
+      //.pipe(uglify())
+      //.pipe(gulp.dest('./build/scripts'));
+
+      /*
+      gulp.src('./test.js')
+        .pipe(browserify({
+            transform: ['babelify'],
+        }))
+        .pipe(gulp.dest('./public/'));
+        */
 });
 
 //clean up server engine and client javascript
@@ -157,17 +221,8 @@ gulp.task('clean-bundle-scripts', function () {
 
 //watch files changes and auto compile file.
 gulp.task('watch', () =>{
-    gulp.watch(['src/client/*.js','src/server/*.js','src/common/*.js'],['build'],()=>{
-        if (server !=null){
-            server.start.bind(server)();
-        }
-    });
-
-    gulp.watch(['index.html'],['html'],function(){
-        if (server !=null){
-            server.start.bind(server)();
-        }
-    });
+    gulp.watch(['src/common/*.js','src/server/*.js','src/client/*.js'],['build']);
+    gulp.watch(['./public/index.html'],['html']);
 });
 
 gulp.task('html',[],function(){
@@ -184,13 +239,14 @@ gulp.task('serve',[], function() {
     server.start();
 
     //use gulp.watch to trigger server actions(notify, start or stop)
-    gulp.watch(['main.js','src/client/*.js','src/common/*.js','src/server/*.js','*.html'], function (file) {
-        server.notify.apply(server, [file]);
-        console.log("files change?");
-        server.start.bind(server)();
+    gulp.watch(['public/**/*.*'], function (file) {
+        //console.log("files change?");
+        if (server == null){
+            server.notify.apply(server, [file]);
+            server.start.bind(server)();
+        }
         browserSync.reload();
     });
-
     // Note: try wrapping in a function if getting an error like `TypeError: Bad argument at TypeError (native) at ChildProcess.spawn`
     //gulp.watch('main.js', function() {
         //server.start.bind(server)()
