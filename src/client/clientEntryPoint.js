@@ -27,7 +27,7 @@ const clientEngine = new MyClientEngine(gameEngine, options);
 document.addEventListener('DOMContentLoaded', function(e){
     //var app = new PIXI.Application();
     //document.body.appendChild(app.view);
-    console.log(clientEngine);
+    //console.log(clientEngine);
     //clientEngine.renderer.autoResize = true;
     //clientEngine.renderer.resize(200, 200);
     

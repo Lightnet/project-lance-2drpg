@@ -52,6 +52,11 @@
             "type": "gulp",
             "task": "browser-sync",
             "problemMatcher": []
+        },
+        {
+            "type": "gulp",
+            "task": "clean-bundle-scripts",
+            "problemMatcher": []
         }
     ]
 }

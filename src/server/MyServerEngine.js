@@ -11,6 +11,7 @@ export default class MyServerEngine extends ServerEngine {
 
     start() {
         super.start();
+        console.log("start game?");
 
         this.gameEngine.initGame();
 
@@ -18,6 +19,8 @@ export default class MyServerEngine extends ServerEngine {
             //player1: null,
             //player2: null
         //};
+
+        this.makeBot();
     }
 
     onPlayerConnected(socket) {
@@ -43,5 +46,11 @@ export default class MyServerEngine extends ServerEngine {
             //console.log('Player 2 disconnected');
             //this.players.player2 = null;
         //}
+    }
+
+    makeBot() {
+
+        let bot = this.gameEngine.makeShip(0);
+
     }
 }

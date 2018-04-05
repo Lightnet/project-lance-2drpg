@@ -18,17 +18,11 @@ var browserSync = require('browser-sync').create();
 var browserify = require('browserify');
 var transform = require('vinyl-transform');
 
-//var nodemon = require('gulp-nodemon');
-
 //var watchify = require('watchify');
 //var bbabelrc = false;
 /* pathConfig*/
 var entryPoint = './src/client/clientEntryPoint.js';//,
 var outPutBrowser = "public/**/*.*";
-    //browserDir = './',
-    //sassWatchPath = './styles/**/*.scss',
-    //jsWatchPath = './src/**/*.js',
-    //htmlWatchPath = './**/*.html';
 /**/
 
 var server = null
@@ -36,13 +30,13 @@ var server = null
 
 //build main app, server, and client engine for lance hosting
 gulp.task('build',['main-script','src-server-script','scr-client-build'],function(){
-    console.log("finish build???")
+    console.log("Finish client and server script files!");
 });
 
 //build lance server, express, and socket.io
 gulp.task('main-script', function () {
     return gulp.src(['main.js'])
-    .pipe(debug({title: 'building main.js'}))
+    .pipe(debug({title: 'Building main script node >> '}))
     .pipe(babel({
         "presets": [
                 ["env", {
@@ -70,7 +64,7 @@ gulp.task('main-script', function () {
 //build lance server engine
 gulp.task('src-server-script', function () {
     return gulp.src(['./src/**/*.js','!src/client/clientEntryPoint.js'])//,'!src/client/*.js'])
-    .pipe(debug({title: 'building server scripts'}))
+    .pipe(debug({title: 'Building server script node >> '}))
     .pipe(babel({
         "presets": [
                 ["env", {
@@ -102,6 +96,7 @@ gulp.task('scr-client-build',  function(cb) {
         entries: entryPoint
         ,debug: true
     });
+
     //bundler.transform(babel);
     bundler.transform(babelify.configure({
         "babelrc": false,
@@ -131,15 +126,14 @@ gulp.task('scr-client-build',  function(cb) {
         return bundler.bundle()
         .on('error', function(err){
             console.log(err.stack);
-         
             //notifier.notify({
               //'title': 'Compile Error',
               //'message': err.message
             //});
         })
         .pipe(source('bundle.js'))
-        .pipe(buffer())
-        .pipe( debug({title: 'src client building...'}) )
+        .pipe(buffer())//this go here first
+        .pipe( debug({title: 'Client script build >>'}) )
         //.on('error', function(err) { console.error(err); this.emit('end'); })
         //.pipe(uglify())
         //.pipe(sourcemaps.init({ loadMaps: true }))
@@ -156,50 +150,6 @@ gulp.task('scr-client-build',  function(cb) {
     }
     return rebundle();
     //rebundle();
-
-    /*
-    var browserified = transform(function(filename) {
-        var bundler = browserify(filename);
-        //bundler.transform(babel);
-        bundler.transform(babelify.configure({
-            "babelrc": false,
-            "presets": [
-                    ["env", {
-                    "targets": {
-                        "node": "current"
-                    }
-                    }]
-                ]
-            ,"plugins": [["transform-runtime"]
-                ,["transform-define", {
-                    "process.env.NODE_ENV": "production",
-                    "typeof window": "object"
-                }]
-                ,["module-resolver", {
-                    "root": ["./dist/src"],
-                    "alias": {
-                    "lance": "./node_modules/lance-gg/es5",
-                    "lance-gg": "./node_modules/lance-gg/es5"
-                    }
-                }]
-            ]
-        }));
-        return bundler.bundle();
-      });
-      */
-      
-      //return gulp.src(['test.js']) // you can also use glob patterns here to browserify->uglify multiple files
-      //.pipe(browserified)
-      //.pipe(uglify())
-      //.pipe(gulp.dest('./build/scripts'));
-
-      /*
-      gulp.src('./test.js')
-        .pipe(browserify({
-            transform: ['babelify'],
-        }))
-        .pipe(gulp.dest('./public/'));
-        */
 });
 
 //clean up server engine and client javascript
@@ -221,10 +171,13 @@ gulp.task('clean-bundle-scripts', function () {
 
 //watch files changes and auto compile file.
 gulp.task('watch', () =>{
+
     gulp.watch(['src/common/*.js','src/server/*.js','src/client/*.js'],['build']);
+
     gulp.watch(['./public/index.html'],['html']);
 });
 
+//copy html
 gulp.task('html',[],function(){
     return gulp.src(['./index.html'])    
     .pipe(gulp.dest('./public'));
@@ -241,58 +194,27 @@ gulp.task('serve',[], function() {
     //use gulp.watch to trigger server actions(notify, start or stop)
     gulp.watch(['public/**/*.*'], function (file) {
         //console.log("files change?");
-        if (server == null){
+        if (server != null){
             server.notify.apply(server, [file]);
             server.start.bind(server)();
         }
         browserSync.reload();
     });
     // Note: try wrapping in a function if getting an error like `TypeError: Bad argument at TypeError (native) at ChildProcess.spawn`
-    //gulp.watch('main.js', function() {
-        //server.start.bind(server)()
-    //});
-    //gulp.start('browser-sync');
+    gulp.watch('main.js', function() {
+        server.start.bind(server)();
+    });
 });
 
-//lanuch browser for proxy url
+//lanuch browser sync for proxy url
 gulp.task('browser-sync',['serve'], function() {
     browserSync.init({
         proxy: "localhost:8080"
         ,files:['pulbic/**/*.*']
     });
 });
-/*
-gulp.task('nodemon', function (cb) {
-	var started = false;
-	var stream = nodemon({
-    script: 'dist/main.js'
-    , ext: 'js css html'
-    , ignore: [
-      'src/',
-      'node_modules/'
-    ]
-    , env: { 'NODE_ENV': 'development' }
-    ,watch:    ['public']
-	}).on('start', function () {
-		// to avoid nodemon being started multiple times
-		// thanks @matthisk
-		if (!started) {
-			cb();
-			started = true; 
-		} 
-    })
-    .on('restart', function () {
-        console.log('restarted!')
-      })
-    .on('crash', function() {
-        console.error('Application has crashed!\n')
-         stream.emit('restart', 10)  // restart the server in 10 seconds 
-    })
-    ;
-    return stream;
-});
-*/
 
+//default auto start
 gulp.task('default',['html','build','watch'],()=>{
     return gulp.start('browser-sync');
 });

@@ -56,14 +56,21 @@ export default class MyGameEngine extends GameEngine {
         //this.addObjectToWorld(new Paddle(this, null, { position: new TwoVector(WIDTH - PADDING, 0), playerId: 2 }));
         //this.addObjectToWorld(new Ball(this, null, { position: new TwoVector(WIDTH /2, HEIGHT / 2) }));
 
-        this.addship();
+        //this.addship();
         console.log("init game!");
     }
 
-    addship(){
-        let ship = new Ship(this, null, {
-            position: new TwoVector(0, 0)
-        });
+    addship(playerId){
+        let ship = new Ship(this, null, {position: new TwoVector(5, 5)});
+        ship.playerId = playerId;
+        this.addObjectToWorld(ship);
+        console.log(`ship added: ${ship.toString()}`);
+        return ship;
+    }
+
+    makeShip(playerId){
+        let ship = new Ship(this, null, {position: new TwoVector(10, 5)});
+        ship.playerId = playerId;
         this.addObjectToWorld(ship);
         console.log(`ship added: ${ship.toString()}`);
         return ship;

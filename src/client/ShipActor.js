@@ -13,8 +13,8 @@ export default class ShipActor {
         //super(renderer);
         //PIXI = require('pixi.js');
         //PixiParticles = require('pixi-particles');
-        console.log("ShipActor");
-        console.log(renderer);
+        //console.log("ShipActor");
+        //console.log(renderer);
 
         this.gameEngine = renderer.gameEngine;
         //this.backLayer = renderer.layer1;
