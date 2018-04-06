@@ -181,6 +181,12 @@ gulp.task('html',[],function(){
     .pipe(gulp.dest('./public'));
 });
 
+gulp.task('assets',[],function(){
+    return gulp.src(['./assets/*.*'])    
+    .pipe(gulp.dest('./public/assets'));
+});
+
+
 //start server
 gulp.task('serve',[], function() {
     //var server = gls.new('main.js');
@@ -215,6 +221,6 @@ gulp.task('browser-sync',['serve'], function() {
 });
 
 //default auto start
-gulp.task('default',['html','build','watch'],()=>{
+gulp.task('default',['assets','html','build','watch'],()=>{
     return gulp.start('browser-sync');
 });
